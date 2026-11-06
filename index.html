@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>دفتر وکالت حسین رحمتی</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 * {
@@ -12,100 +15,157 @@
 
 body {
     margin: 0;
-    font-family: Tahoma, sans-serif;
-    background: #f4f5f7;
-    color: #222;
+    font-family: Tahoma, Arial, sans-serif;
+    background: #f3f5f8;
+    color: #202b3c;
+    line-height: 1.9;
 }
 
 header {
-    background: #101d35;
+    background: #101e35;
     color: white;
     text-align: center;
-    padding: 30px 15px;
+    padding: 40px 15px;
 }
 
 header h1 {
-    color: #d6b46a;
+    margin: 0;
+    font-size: 28px;
+}
+
+header p {
+    color: #d6b76c;
 }
 
 nav {
     background: #182b49;
-    padding: 15px;
     text-align: center;
+    padding: 12px;
 }
 
 nav a {
     color: white;
     text-decoration: none;
-    margin: 10px;
-}
-
-.hero {
-    text-align: center;
-    background: white;
-    padding: 45px 15px;
-}
-
-.hero h2 {
-    color: #101d35;
+    margin: 0 12px;
+    display: inline-block;
 }
 
 .container {
-    max-width: 650px;
+    max-width: 850px;
     margin: 30px auto;
-    padding: 20px;
+    padding: 15px;
+}
+
+.card {
     background: white;
-    border-radius: 10px;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 22px;
+    box-shadow: 0 3px 15px #00000010;
 }
 
 h2 {
-    color: #101d35;
-}
-
-input, textarea, button {
-    width: 100%;
-    padding: 13px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-family: Tahoma;
-    font-size: 14px;
-}
-
-button {
-    background: #c7a45b;
-    color: #101d35;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #b28d45;
-}
-
-.result {
-    background: #eef2f7;
-    padding: 15px;
-    border-radius: 7px;
-    margin-top: 15px;
-    line-height: 2;
-    overflow-wrap: anywhere;
-}
-
-footer {
-    background: #101d35;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    margin-top: 40px;
-}
-
-.section-title {
-    border-bottom: 2px solid #d6b46a;
+    color: #142844;
+    border-bottom: 2px solid #d6b76c;
     padding-bottom: 10px;
 }
 
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 13px;
+    margin-top: 7px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 15px;
+}
+
+button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    background: #142844;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background: #263f65;
+}
+
+.message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 7px;
+    display: none;
+    overflow-wrap: anywhere;
+}
+
+.success {
+    display: block;
+    background: #e5f7eb;
+    color: #176b35;
+}
+
+.error {
+    display: block;
+    background: #fdeaea;
+    color: #a52222;
+}
+
+.info {
+    display: block;
+    background: #eaf1ff;
+    color: #183d77;
+}
+
+.tracking-code {
+    font-size: 20px;
+    font-weight: bold;
+    direction: ltr;
+    display: inline-block;
+    margin-top: 8px;
+}
+
+.status {
+    font-weight: bold;
+}
+
+footer {
+    background: #101e35;
+    color: white;
+    text-align: center;
+    padding: 25px 10px;
+    margin-top: 40px;
+}
+
+.gold {
+    color: #d6b76c;
+}
+
+@media(max-width: 600px) {
+    header h1 {
+        font-size: 22px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+}
 </style>
 </head>
 
@@ -113,249 +173,323 @@ footer {
 
 <header>
     <h1>دفتر وکالت حسین رحمتی</h1>
-    <p>ارائه خدمات حقوقی و مشاوره</p>
+    <p>ارائه خدمات حقوقی و مشاوره تخصصی</p>
 </header>
 
 <nav>
-    <a href="#home">صفحه اصلی</a>
-    <a href="#appointment">درخواست نوبت</a>
-    <a href="#tracking">پیگیری نوبت</a>
+    <a href="#about">درباره ما</a>
+    <a href="#appointment">ثبت درخواست</a>
+    <a href="#tracking">پیگیری درخواست</a>
     <a href="#contact">تماس با ما</a>
 </nav>
 
-<section class="hero" id="home">
-    <h2>به دفتر وکالت خوش آمدید</h2>
-    <p>
-        برای دریافت مشاوره و تعیین وقت ملاقات
-        درخواست خود را ثبت کنید.
-    </p>
-</section>
+<div class="container">
 
-<div class="container" id="appointment">
+    <section class="card" id="about">
+        <h2>درباره دفتر وکالت</h2>
 
-    <h2 class="section-title">ثبت درخواست نوبت</h2>
+        <p>
+            دفتر وکالت حسین رحمتی با هدف ارائه خدمات حقوقی،
+            مشاوره و پیگیری امور قضایی فعالیت می‌کند.
+        </p>
+    </section>
 
-    <form id="appointmentForm">
+    <section class="card" id="appointment">
 
-        <label>نام و نام خانوادگی</label>
+        <h2>ثبت درخواست مشاوره</h2>
+
+        <form id="appointmentForm">
+
+            <label>نام و نام خانوادگی</label>
+            <input
+                type="text"
+                id="fullName"
+                maxlength="100"
+                required
+                placeholder="نام کامل خود را وارد کنید"
+            >
+
+            <label>شماره تلفن</label>
+            <input
+                type="tel"
+                id="phone"
+                maxlength="20"
+                required
+                placeholder="شماره تماس"
+            >
+
+            <label>موضوع درخواست</label>
+            <textarea
+                id="subject"
+                maxlength="2000"
+                required
+                rows="4"
+                placeholder="موضوع درخواست خود را بنویسید"
+            ></textarea>
+
+            <label>تاریخ پیشنهادی</label>
+            <input
+                type="date"
+                id="date"
+                required
+            >
+
+            <label>ساعت پیشنهادی</label>
+            <input
+                type="time"
+                id="time"
+                required
+            >
+
+            <button type="submit" id="submitButton">
+                ثبت درخواست
+            </button>
+
+            <div id="submitResult" class="message"></div>
+
+        </form>
+
+    </section>
+
+    <section class="card" id="tracking">
+
+        <h2>پیگیری درخواست</h2>
+
+        <p>
+            برای مشاهده وضعیت درخواست خود، کد رهگیری را وارد کنید.
+        </p>
+
+        <label>کد رهگیری</label>
+
         <input
             type="text"
-            id="fullName"
-            placeholder="نام کامل خود را وارد کنید"
-            required
+            id="trackingCode"
+            placeholder="مثلاً HR-A1B2C3D4"
+            dir="ltr"
         >
 
-        <label>شماره تلفن</label>
-        <input
-            type="tel"
-            id="phone"
-            placeholder="مثلاً 09123456789"
-            pattern="09[0-9]{9}"
-            required
-        >
-
-        <label>موضوع درخواست</label>
-        <textarea
-            id="subject"
-            placeholder="موضوع مشاوره خود را بنویسید"
-            required
-        ></textarea>
-
-        <label>تاریخ پیشنهادی</label>
-        <input
-            type="date"
-            id="date"
-            required
-        >
-
-        <label>ساعت پیشنهادی</label>
-        <input
-            type="time"
-            id="time"
-            required
-        >
-
-        <button type="submit">
-            ثبت درخواست
+        <button type="button" id="trackingButton">
+            پیگیری درخواست
         </button>
 
-    </form>
+        <div id="trackingResult" class="message"></div>
 
-    <div id="submitResult"></div>
+    </section>
 
-</div>
+    <section class="card" id="contact">
 
-<div class="container" id="tracking">
+        <h2>اطلاعات تماس</h2>
 
-    <h2 class="section-title">پیگیری درخواست</h2>
+        <p>
+            <strong>نام وکیل:</strong>
+            حسین رحمتی
+        </p>
 
-    <p>
-        کد پیگیری دریافت‌شده را وارد کنید.
-    </p>
+        <p>
+            <strong>شماره تماس:</strong>
+            09121414752
+        </p>
 
-    <input
-        type="text"
-        id="trackingCode"
-        placeholder="کد پیگیری"
-    >
+        <p>
+            <strong>آدرس:</strong>
+            ایران، استان البرز، فردیس، بین کانال و فلکه سوم
+        </p>
 
-    <button onclick="trackAppointment()">
-        پیگیری درخواست
-    </button>
-
-    <div id="trackingResult"></div>
-
-</div>
-
-<div class="container" id="contact">
-
-    <h2 class="section-title">اطلاعات تماس</h2>
-
-    <p>نام وکیل: حسین رحمتی</p>
-
-    <p>تلفن: ۰۹۱۲۱۴۱۴۷۵۲</p>
-
-    <p>
-        آدرس:
-        ایران، البرز، فردیس،
-        بین کانال و فلکه سوم
-    </p>
+    </section>
 
 </div>
 
 <footer>
-    <p>
-        تمامی حقوق متعلق به دفتر وکالت حسین رحمتی است.
-    </p>
+    <p>دفتر وکالت حسین رحمتی</p>
+    <p class="gold">ارائه خدمات حقوقی و مشاوره</p>
 </footer>
 
 <script>
 
-const STORAGE_KEY = "lawyerAppointments";
+const SUPABASE_URL =
+"https://cqbsnjokwjibhvbwwxne.supabase.co";
 
-function getAppointments() {
-    return JSON.parse(
-        localStorage.getItem(STORAGE_KEY) || "[]"
-    );
+const SUPABASE_KEY =
+"sb_publishable_6tQuIS9dAy3eNNmxAL9BTQ_rLi84gl-";
+
+const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+const form = document.getElementById("appointmentForm");
+const submitResult = document.getElementById("submitResult");
+const submitButton = document.getElementById("submitButton");
+
+function showMessage(element, message, type) {
+    element.textContent = message;
+    element.className = "message " + type;
 }
 
-function saveAppointments(data) {
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(data)
-    );
+// تولید کد رهگیری
+function generateTrackingCode() {
+    const random = crypto.randomUUID()
+        .replace(/-/g, "")
+        .substring(0, 12)
+        .toUpperCase();
+
+    return "HR-" + random;
 }
 
-document.getElementById("appointmentForm")
-.addEventListener("submit", function(event) {
+// ثبت درخواست
+form.addEventListener("submit", async function(event) {
 
     event.preventDefault();
 
-    const fullName =
-        document.getElementById("fullName").value.trim();
+    submitButton.disabled = true;
+    submitButton.textContent = "در حال ثبت درخواست...";
 
-    const phone =
-        document.getElementById("phone").value.trim();
+    submitResult.className = "message";
+    submitResult.textContent = "";
 
-    const subject =
-        document.getElementById("subject").value.trim();
-
-    const date =
-        document.getElementById("date").value;
-
-    const time =
-        document.getElementById("time").value;
-
-    if (!/^09[0-9]{9}$/.test(phone)) {
-        alert("شماره تلفن معتبر نیست.");
-        return;
-    }
-
-    const code =
-        "HR-" + Date.now().toString().slice(-8);
+    const trackingCode = generateTrackingCode();
 
     const appointment = {
-        code: code,
-        fullName: fullName,
-        phone: phone,
-        subject: subject,
-        date: date,
-        time: time,
-        status: "در انتظار بررسی"
+        full_name: document.getElementById("fullName").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        subject: document.getElementById("subject").value.trim(),
+        preferred_date: document.getElementById("date").value,
+        preferred_time: document.getElementById("time").value,
+        tracking_code: trackingCode,
+        status: "pending"
     };
 
-    const appointments = getAppointments();
+    try {
 
-    appointments.push(appointment);
+        const { error } = await db
+            .from("appointments")
+            .insert([appointment]);
 
-    saveAppointments(appointments);
+        if (error) {
+            throw error;
+        }
 
-    document.getElementById("submitResult").innerHTML = `
-        <div class="result">
-            <h3>درخواست شما ثبت شد!</h3>
-            <p>کد پیگیری شما:</p>
-            <strong>${code}</strong>
-            <p>
-                این کد را برای پیگیری درخواست نگه دارید.
-            </p>
-        </div>
-    `;
+        submitResult.innerHTML = "";
 
-    this.reset();
+        const title = document.createElement("div");
+        title.textContent = "درخواست شما با موفقیت ثبت شد.";
+
+        const codeLabel = document.createElement("div");
+        codeLabel.textContent = "کد رهگیری شما:";
+
+        const code = document.createElement("div");
+        code.className = "tracking-code";
+        code.textContent = trackingCode;
+
+        const warning = document.createElement("div");
+        warning.textContent =
+            "این کد را نگه دارید تا بتوانید درخواست خود را پیگیری کنید.";
+
+        submitResult.append(title, codeLabel, code, warning);
+        submitResult.className = "message success";
+
+        form.reset();
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            submitResult,
+            "ثبت درخواست انجام نشد. لطفاً دوباره تلاش کنید.",
+            "error"
+        );
+
+    } finally {
+
+        submitButton.disabled = false;
+        submitButton.textContent = "ثبت درخواست";
+
+    }
 
 });
 
-function trackAppointment() {
+// پیگیری درخواست
+const trackingButton =
+    document.getElementById("trackingButton");
 
-    const code =
-        document.getElementById("trackingCode")
-        .value.trim();
+const trackingResult =
+    document.getElementById("trackingResult");
 
-    const appointments = getAppointments();
+trackingButton.addEventListener("click", async function() {
 
-    const appointment = appointments.find(
-        item => item.code === code
-    );
+    const code = document
+        .getElementById("trackingCode")
+        .value.trim()
+        .toUpperCase();
 
-    const result =
-        document.getElementById("trackingResult");
-
-    if (!appointment) {
-
-        result.innerHTML = `
-            <div class="result">
-                درخواست موردنظر پیدا نشد.
-            </div>
-        `;
-
+    if (!code) {
+        showMessage(
+            trackingResult,
+            "لطفاً کد رهگیری را وارد کنید.",
+            "error"
+        );
         return;
     }
 
-    result.innerHTML = `
-        <div class="result">
-            <h3>وضعیت درخواست</h3>
-            <p>نام: ${escapeHTML(appointment.fullName)}</p>
-            <p>تاریخ: ${escapeHTML(appointment.date)}</p>
-            <p>ساعت: ${escapeHTML(appointment.time)}</p>
-            <p>
-                وضعیت:
-                <strong>${escapeHTML(appointment.status)}</strong>
-            </p>
-        </div>
-    `;
-}
+    trackingButton.disabled = true;
+    trackingButton.textContent = "در حال بررسی...";
 
-function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, function(char) {
-        return {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;"
-        }[char];
-    });
-}
+    try {
+
+        const { data, error } = await db
+            .from("appointments")
+            .select("status")
+            .eq("tracking_code", code)
+            .maybeSingle();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data) {
+            showMessage(
+                trackingResult,
+                "درخواستی با این کد رهگیری پیدا نشد.",
+                "error"
+            );
+            return;
+        }
+
+        let statusText = "";
+
+        if (data.status === "pending") {
+            statusText = "در انتظار بررسی وکیل";
+        } else if (data.status === "approved") {
+            statusText = "درخواست شما تأیید شده است.";
+        } else if (data.status === "rejected") {
+            statusText = "درخواست شما تأیید نشده است.";
+        }
+
+        showMessage(
+            trackingResult,
+            "وضعیت درخواست: " + statusText,
+            "info"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            trackingResult,
+            "خطا در دریافت وضعیت درخواست.",
+            "error"
+        );
+
+    } finally {
+
+        trackingButton.disabled = false;
+        trackingButton.textContent = "پیگیری درخواست";
+
+    }
+
+});
 
 </script>
 
