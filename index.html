@@ -1,1 +1,363 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دفتر وکالت حسین رحمتی</title>
 
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Tahoma, sans-serif;
+    background: #f4f5f7;
+    color: #222;
+}
+
+header {
+    background: #101d35;
+    color: white;
+    text-align: center;
+    padding: 30px 15px;
+}
+
+header h1 {
+    color: #d6b46a;
+}
+
+nav {
+    background: #182b49;
+    padding: 15px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 10px;
+}
+
+.hero {
+    text-align: center;
+    background: white;
+    padding: 45px 15px;
+}
+
+.hero h2 {
+    color: #101d35;
+}
+
+.container {
+    max-width: 650px;
+    margin: 30px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+}
+
+h2 {
+    color: #101d35;
+}
+
+input, textarea, button {
+    width: 100%;
+    padding: 13px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: Tahoma;
+    font-size: 14px;
+}
+
+button {
+    background: #c7a45b;
+    color: #101d35;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #b28d45;
+}
+
+.result {
+    background: #eef2f7;
+    padding: 15px;
+    border-radius: 7px;
+    margin-top: 15px;
+    line-height: 2;
+    overflow-wrap: anywhere;
+}
+
+footer {
+    background: #101d35;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+.section-title {
+    border-bottom: 2px solid #d6b46a;
+    padding-bottom: 10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>دفتر وکالت حسین رحمتی</h1>
+    <p>ارائه خدمات حقوقی و مشاوره</p>
+</header>
+
+<nav>
+    <a href="#home">صفحه اصلی</a>
+    <a href="#appointment">درخواست نوبت</a>
+    <a href="#tracking">پیگیری نوبت</a>
+    <a href="#contact">تماس با ما</a>
+</nav>
+
+<section class="hero" id="home">
+    <h2>به دفتر وکالت خوش آمدید</h2>
+    <p>
+        برای دریافت مشاوره و تعیین وقت ملاقات
+        درخواست خود را ثبت کنید.
+    </p>
+</section>
+
+<div class="container" id="appointment">
+
+    <h2 class="section-title">ثبت درخواست نوبت</h2>
+
+    <form id="appointmentForm">
+
+        <label>نام و نام خانوادگی</label>
+        <input
+            type="text"
+            id="fullName"
+            placeholder="نام کامل خود را وارد کنید"
+            required
+        >
+
+        <label>شماره تلفن</label>
+        <input
+            type="tel"
+            id="phone"
+            placeholder="مثلاً 09123456789"
+            pattern="09[0-9]{9}"
+            required
+        >
+
+        <label>موضوع درخواست</label>
+        <textarea
+            id="subject"
+            placeholder="موضوع مشاوره خود را بنویسید"
+            required
+        ></textarea>
+
+        <label>تاریخ پیشنهادی</label>
+        <input
+            type="date"
+            id="date"
+            required
+        >
+
+        <label>ساعت پیشنهادی</label>
+        <input
+            type="time"
+            id="time"
+            required
+        >
+
+        <button type="submit">
+            ثبت درخواست
+        </button>
+
+    </form>
+
+    <div id="submitResult"></div>
+
+</div>
+
+<div class="container" id="tracking">
+
+    <h2 class="section-title">پیگیری درخواست</h2>
+
+    <p>
+        کد پیگیری دریافت‌شده را وارد کنید.
+    </p>
+
+    <input
+        type="text"
+        id="trackingCode"
+        placeholder="کد پیگیری"
+    >
+
+    <button onclick="trackAppointment()">
+        پیگیری درخواست
+    </button>
+
+    <div id="trackingResult"></div>
+
+</div>
+
+<div class="container" id="contact">
+
+    <h2 class="section-title">اطلاعات تماس</h2>
+
+    <p>نام وکیل: حسین رحمتی</p>
+
+    <p>تلفن: ۰۹۱۲۱۴۱۴۷۵۲</p>
+
+    <p>
+        آدرس:
+        ایران، البرز، فردیس،
+        بین کانال و فلکه سوم
+    </p>
+
+</div>
+
+<footer>
+    <p>
+        تمامی حقوق متعلق به دفتر وکالت حسین رحمتی است.
+    </p>
+</footer>
+
+<script>
+
+const STORAGE_KEY = "lawyerAppointments";
+
+function getAppointments() {
+    return JSON.parse(
+        localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+}
+
+function saveAppointments(data) {
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(data)
+    );
+}
+
+document.getElementById("appointmentForm")
+.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const fullName =
+        document.getElementById("fullName").value.trim();
+
+    const phone =
+        document.getElementById("phone").value.trim();
+
+    const subject =
+        document.getElementById("subject").value.trim();
+
+    const date =
+        document.getElementById("date").value;
+
+    const time =
+        document.getElementById("time").value;
+
+    if (!/^09[0-9]{9}$/.test(phone)) {
+        alert("شماره تلفن معتبر نیست.");
+        return;
+    }
+
+    const code =
+        "HR-" + Date.now().toString().slice(-8);
+
+    const appointment = {
+        code: code,
+        fullName: fullName,
+        phone: phone,
+        subject: subject,
+        date: date,
+        time: time,
+        status: "در انتظار بررسی"
+    };
+
+    const appointments = getAppointments();
+
+    appointments.push(appointment);
+
+    saveAppointments(appointments);
+
+    document.getElementById("submitResult").innerHTML = `
+        <div class="result">
+            <h3>درخواست شما ثبت شد!</h3>
+            <p>کد پیگیری شما:</p>
+            <strong>${code}</strong>
+            <p>
+                این کد را برای پیگیری درخواست نگه دارید.
+            </p>
+        </div>
+    `;
+
+    this.reset();
+
+});
+
+function trackAppointment() {
+
+    const code =
+        document.getElementById("trackingCode")
+        .value.trim();
+
+    const appointments = getAppointments();
+
+    const appointment = appointments.find(
+        item => item.code === code
+    );
+
+    const result =
+        document.getElementById("trackingResult");
+
+    if (!appointment) {
+
+        result.innerHTML = `
+            <div class="result">
+                درخواست موردنظر پیدا نشد.
+            </div>
+        `;
+
+        return;
+    }
+
+    result.innerHTML = `
+        <div class="result">
+            <h3>وضعیت درخواست</h3>
+            <p>نام: ${escapeHTML(appointment.fullName)}</p>
+            <p>تاریخ: ${escapeHTML(appointment.date)}</p>
+            <p>ساعت: ${escapeHTML(appointment.time)}</p>
+            <p>
+                وضعیت:
+                <strong>${escapeHTML(appointment.status)}</strong>
+            </p>
+        </div>
+    `;
+}
+
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, function(char) {
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[char];
+    });
+}
+
+</script>
+
+</body>
+</html>
