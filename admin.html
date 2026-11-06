@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>پنل مدیریت وکیل</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Tahoma, sans-serif;
+    background: #f1f3f6;
+    color: #222;
+}
+
+header {
+    background: #101d35;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+header h1 {
+    color: #d6b46a;
+}
+
+.container {
+    max-width: 950px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px #ddd;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: Tahoma;
+}
+
+button {
+    border: none;
+    padding: 11px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: Tahoma;
+    margin: 5px;
+}
+
+.login-btn {
+    background: #c7a45b;
+    color: #101d35;
+    width: 100%;
+    font-weight: bold;
+}
+
+.approve {
+    background: #198754;
+    color: white;
+}
+
+.reject {
+    background: #dc3545;
+    color: white;
+}
+
+.logout {
+    background: #101d35;
+    color: white;
+}
+
+.appointment {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    line-height: 2;
+}
+
+.status {
+    font-weight: bold;
+    color: #a57920;
+}
+
+.hidden {
+    display: none;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>پنل مدیریت دفتر وکالت</h1>
+    <p>حسین رحمتی</p>
+</header>
+
+<div class="container">
+
+    <div class="card" id="loginBox">
+
+        <h2>ورود وکیل</h2>
+
+        <input
+            type="email"
+            id="email"
+            placeholder="ایمیل وکیل"
+        >
+
+        <input
+            type="password"
+            id="password"
+            placeholder="رمز عبور"
+        >
+
+        <button class="login-btn" onclick="login()">
+            ورود به پنل
+        </button>
+
+        <p id="loginMessage"></p>
+
+    </div>
+
+    <div id="dashboard" class="hidden">
+
+        <div class="card">
+            <h2>مدیریت درخواست‌ها</h2>
+
+            <button onclick="loadAppointments()">
+                تازه‌سازی درخواست‌ها
+            </button>
+
+            <button class="logout" onclick="logout()">
+                خروج
+            </button>
+
+            <p id="message"></p>
+        </div>
+
+        <div class="card">
+            <h2>درخواست‌های مراجعان</h2>
+            <div id="appointments"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://cqbsnjokwjibhvbwwxne.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_6tQuIS9dAy3eNNmxAL9BTQ_rLi84gl-";
+
+const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+async function login() {
+
+    const email =
+        document.getElementById("email").value;
+
+    const password =
+        document.getElementById("password").value;
+
+    const message =
+        document.getElementById("loginMessage");
+
+    message.textContent = "در حال ورود...";
+
+    const { data, error } =
+        await db.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+    if (error) {
+        message.textContent =
+            "خطا: " + error.message;
+        return;
+    }
+
+    document.getElementById("loginBox")
+        .classList.add("hidden");
+
+    document.getElementById("dashboard")
+        .classList.remove("hidden");
+
+    loadAppointments();
+}
+
+async function loadAppointments() {
+
+    const box =
+        document.getElementById("appointments");
+
+    box.textContent = "در حال دریافت درخواست‌ها...";
+
+    const { data, error } = await db
+        .from("appointments")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        box.textContent =
+            "خطا در دریافت اطلاعات: " + error.message;
+        return;
+    }
+
+    box.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        box.textContent = "هنوز درخواستی ثبت نشده است.";
+        return;
+    }
+
+    data.forEach(item => {
+
+        const div = document.createElement("div");
+
+        div.className = "appointment";
+
+        const title = document.createElement("h3");
+        title.textContent = item.full_name;
+
+        const phone = document.createElement("p");
+        phone.textContent = "تلفن: " + item.phone;
+
+        const subject = document.createElement("p");
+        subject.textContent = "موضوع: " + item.subject;
+
+        const date = document.createElement("p");
+        date.textContent =
+            "تاریخ: " + item.preferred_date;
+
+        const time = document.createElement("p");
+        time.textContent =
+            "ساعت: " + item.preferred_time;
+
+        const status = document.createElement("p");
+        status.className = "status";
+        status.textContent =
+            "وضعیت: " + item.status;
+
+        const approve = document.createElement("button");
+        approve.className = "approve";
+        approve.textContent = "تأیید";
+        approve.onclick = () =>
+            updateStatus(item.id, "approved");
+
+        const reject = document.createElement("button");
+        reject.className = "reject";
+        reject.textContent = "رد";
+        reject.onclick = () =>
+            updateStatus(item.id, "rejected");
+
+        div.append(
+            title,
+            phone,
+            subject,
+            date,
+            time,
+            status,
+            approve,
+            reject
+        );
+
+        box.appendChild(div);
+    });
+}
+
+async function updateStatus(id, status) {
+
+    const { error } = await db
+        .from("appointments")
+        .update({ status: status })
+        .eq("id", id);
+
+    if (error) {
+        alert("خطا: " + error.message);
+        return;
+    }
+
+    alert("وضعیت درخواست تغییر کرد.");
+
+    loadAppointments();
+}
+
+async function logout() {
+
+    await db.auth.signOut();
+
+    document.getElementById("dashboard")
+        .classList.add("hidden");
+
+    document.getElementById("loginBox")
+        .classList.remove("hidden");
+
+    document.getElementById("password").value = "";
+}
+
+</script>
+
+</body>
+</html>
